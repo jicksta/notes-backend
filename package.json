@@ -1,0 +1,21 @@
+{
+  "name": "notes-backend",
+  "version": "0.0.1",
+  "private": true,
+  "directories": {
+    "test": "test"
+  },
+  "repository": "https://github.com/jicksta/notes-backend",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "author": "Jay Phillips",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.1.1",
+    "glob": "^3.2.9",
+    "evernote": "1.25.3"
+  },
+  "devDependencies": {
+  }
+}
