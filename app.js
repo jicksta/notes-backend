@@ -2,6 +2,7 @@ var express         = require('express'),
     session         = require('express-session'),
     RedisStore      = require('connect-redis')(session),
     path            = require('path'),
+    modRewrite      = require('connect-modrewrite'),
     // mongoose     = require('mongoose'),
     hbs             = require('express-hbs'),
     logger          = require('morgan'),
@@ -81,6 +82,7 @@ var sessionStore = new LoggingRedisStore();
 
 app.use(compress());
 app.use(favicon());
+app.use(modRewrite(['^/api/api/(.*) /api/$1'])); // Temporary until I figure out ember-cli proxy quirks.
 app.use(logger('dev'));
 app.use(session({
   store: sessionStore,

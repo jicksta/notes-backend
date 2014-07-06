@@ -1,6 +1,7 @@
 var EvernoteSession = require('../../lib/evernote_session');
 
 exports.me = function(request, response) {
+  // return response.json(401, {error: "Not authenticated!"});
   var session = new EvernoteSession(request.session);
 
   if (session) {

@@ -1,25 +1,22 @@
-var _ = require('underscore'),
-    EvernoteSession = require('../../lib/evernote_session');
+var _ = require('underscore');
 
-exports.notebooks = function(request, response) {
-  var session = new EvernoteSession(request.session);
-  if (!session) {
-    return response.json(401, {error: "Not authenticated!"});
-  }
-
-  var getNotebooks = session.api.notebooks();
-
-  getNotebooks.then(function(notebooks) {
-    response.json({
+exports.notebooks = function(request, response, ensession) {
+  return ensession.api.notebooks().then(function(notebooks) {
+    return {
       notebook: notebooks.map(idFromGUID)
-    });
-  });
-
-  getNotebooks.catch(function(err) {
-    return response.json(500, {error: err});
+    };
   });
 };
 
-function idFromGUID(notebook) {
-  return _.extend({id: notebook.guid}, notebook);
+exports.notes = function(request, response, ensession) {
+  return ensession.api.notes({max: 40}).then(function(result) {
+    return {
+      note: result.notes.map(idFromGUID)
+    };
+  });
+};
+
+
+function idFromGUID(obj) {
+  return _.extend({id: obj.guid}, obj);
 }
