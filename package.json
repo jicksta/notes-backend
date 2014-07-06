@@ -1,13 +1,14 @@
 {
-  "name": "notes-backend-node",
+  "name": "notes-backend",
   "version": "0.1.0",
   "description": "Backend service for Notes app",
   "repository": "https://github.com/jicksta/notes-backend-node",
   "dependencies": {
     "body-parser": "~1.0.0",
     "compression": "1.0.1",
+    "connect-redis": "^2.0.0",
     "errorhandler": "~1.0.0",
-    "express": "~4.0.0-rc2",
+    "express": "^4.5.0",
     "express-hbs": "~0.7.9",
     "express-session": "^1.6.3",
     "method-override": "~1.0.0",
