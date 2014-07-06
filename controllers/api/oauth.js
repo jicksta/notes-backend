@@ -1,10 +1,9 @@
 var _ = require("underscore"),
+    settings = require("../../config/settings"),
     EvernoteAuth = require("../../lib/evernote_auth");
 
-var SANDBOX = false;
-
 exports.oauthStart = function(request, response) {
-  var auth = new EvernoteAuth({sandbox: SANDBOX}).oauthSetup();
+  var auth = new EvernoteAuth().oauthSetup();
 
   auth.then(function(result) {
     request.session.OAUTH_SECRET = result.oauthTokenSecret;
@@ -17,17 +16,17 @@ exports.oauthFinish = function(request, response) {
       token = request.query.oauth_token,
       verifier = request.query.oauth_verifier;
 
-  var auth = new EvernoteAuth({sandbox: SANDBOX}).oauthFinish(verifier, token, secret);
+  var auth = new EvernoteAuth().oauthFinish(verifier, token, secret);
 
   auth.then(function(result) {
     _.extend(request.session, result);
-    response.redirect("/api/v1/me")
+    response.redirect(settings.oauthSuccessRedirectURL)
   }, errorHandler(response));
 };
 
 function errorHandler(response) {
   return function() {
-    var message = JSON.stringify(arguments);
-    response.send(500, {error: message})
+    var args = Array.prototype.slice.apply(arguments, 0);
+    response.send(500, {error: args})
   };
 }
