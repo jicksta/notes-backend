@@ -2,7 +2,7 @@ var EvernoteSession = require('../../lib/evernote_session');
 
 exports.me = function(request, response) {
   // return response.json(401, {error: "Not authenticated!"});
-  var session = new EvernoteSession(request.session);
+  var session = EvernoteSession(request.session);
 
   if (session) {
     session.userJSON().then(function(userJSON) {
@@ -21,7 +21,8 @@ exports.me = function(request, response) {
 };
 
 exports.logout = function(request, response) {
-  response.session.destroy(function(err) {
-    err ? response.json(500, {error: err}) : response.json({});
+  request.session.destroy(function(err) {
+    var redirectTo = request.query.redirect || "/";
+    err ? response.json(500, {error: err}) : response.redirect(redirectTo);
   });
 };
