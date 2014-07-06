@@ -15,5 +15,6 @@ module.exports.install = function(router) {
 
   router.get("/api/notebooks", EN(notes.notebooks));
   router.get("/api/notes", EN(notes.notes));
+  router.get("/api/tags", EN(notes.tags));
 
 };
