@@ -1,60 +1,48 @@
 module.exports = (grunt) ->
+
+  SERVER_GLOBS = [
+    'config/**/*.js',
+    'controllers/**/*.js',
+    'lib/**/*.js',
+    'models/**/*.js',
+    'routes/**/*.js',
+    'app.js'
+  ]
+  SPECS_GLOBS = ['spec/**/*.js']
+  IGNORES = ['**/node_modules/**', 'public/vendor/**', '**/*.min.js']
+  WATCH_GLOBS = [SERVER_GLOBS..., ("!#{f}" for f in IGNORES)...]
+
   config=
     jshint:
       options:
-        ignores: ['node_modules/**', 'public/vendor/**', '**/*.min.js']
+        ignores: IGNORES
         jshintrc: '.jshintrc'
-      server: ['controllers/**/*.js', 'models/**/*.js', 'routes/**/*.js', 'app.js', 'config.js']
-      client: 'public/js/**/*.js'
-    concat:
-      css:
-        files:
-          # add your css files over here to concatenate all css files
-          # let's save our site users some bandwith
-          src: ['public/vendor/bootstrap/dist/css/bootstrap.min.css', 'public/css/styles.min.css']
-          dest: 'public/css/app.styles.min.css'
-    uglify:
-      options:
-        mangle:
-          except: ['jQuery']
-      target:
-        # add your js files over here to minify them into one javascript source file
-        'public/js/app.min.js': ['public/vendor/jquery/dist/jquery.min.js', 'public/vendor/bootstrap/dist/js/bootstrap.min.js', 'public/js/main.js']
-    sass:
-      src:
-        files: [{
-          expand: true
-          cwd: 'public/sass'
-          src: '**/*.scss'
-          dest: 'public/css'
-          ext: '.css'
-        }]
-    cssmin:
-      src:
-        files: [{
-          expand: true
-          cwd: 'public/css'
-          src: '**/*.css'
-          dest: 'public/css'
-          ext: '.min.css'
-        }]
+      server: SERVER_GLOBS
+
     'node-inspector':
       options:
         'save-live-edit': true
+
+    jasmine_node:
+      options:
+        forceExit: true
+        match: '.'
+        matchall: false
+        useHelpers: true
+        extensions: 'js'
+        specNameMatcher: 'spec'
+      all: ['spec/']
+
     watch:
       all:
-        files: ['public/**/*', 'views/**', '!**/node_modules/**', '!public/vendor/**/*', '!**/*.min.*']
-        options:
-          livereload: true
-      scripts:
-        files: 'public/js/**/*.js'
-        tasks: ['jshint:client', 'uglify']
+        files: WATCH_GLOBS
       server:
         files: '<%= jshint.server %>'
         tasks: 'jshint:server'
-      scss:
-        files: ['public/sass/**/*.scss']
-        tasks: ['sass', 'cssmin', 'concat:css']
+      specs:
+        files: [WATCH_GLOBS..., SPECS_GLOBS...]
+        tasks: ['spec']
+
     concurrent:
       tasks: ['node-inspector', 'watch']
       options:
@@ -63,7 +51,7 @@ module.exports = (grunt) ->
 
   @initConfig config
 
-  # Load the tasks
-
   require('matchdep').filterDev('grunt-*').forEach @loadNpmTasks
-  @registerTask 'default', ['jshint', 'uglify', 'sass', 'cssmin', 'concat:css', 'concurrent']
+  @registerTask 'default', ['jshint', 'concurrent']
+  @registerTask 'spec', ['jasmine_node']
+

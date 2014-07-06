@@ -1,6 +1,7 @@
 module.exports = {
   oauthSuccessRedirectURL: "/notes",
   oauthCallbackURL: "http://localhost:4000/api/v1/oauth/finish",
-  sandbox: false,
-  logEvernoteResponses: true
+  sandbox: true,
+  logEvernoteResponses: true,
+  concurrentRequests: 10
 };

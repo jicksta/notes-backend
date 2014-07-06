@@ -13,8 +13,10 @@ module.exports.install = function(router) {
   var EN = require('../lib/evernote_action'),
       notes = require("../controllers/api/notes");
 
-  router.get("/api/notebooks", EN(notes.notebooks));
-  router.get("/api/notes", EN(notes.notes));
   router.get("/api/tags", EN(notes.tags));
+  router.get("/api/notes", EN(notes.notes));
+  router.get("/api/notes/:id", EN(notes.note));
+  router.get("/api/notebooks", EN(notes.notebooks));
+  router.post("/api/notebooks", EN(notes.createNotebook));
 
 };

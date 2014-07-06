@@ -3,25 +3,19 @@ var config = {
     server: {
       port: 4000,
     },
-    database: {
-      url: 'mongodb://localhost/notes-backend-express_dev'
-    }
+    database: { }
   },
   testing: {
     server: {
       port: 3001
     },
-    database: {
-      url: 'mongodb://localhost/notes-backend-express_test'
-    }
+    database: { }
   },
   production: {
     server: {
       port: 8080
     },
-    database: {
-      url: 'mongodb://localhost/notes-backend-express'
-    }
+    database: { }
   }
 };
 

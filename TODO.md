@@ -2,5 +2,10 @@ TODO
 ----
 
 * Get Gruntfile.coffee working
-* Is there any express equivalent of `url_for` in Express? EvernoteAPI.options.callbackUrl is hard-coded.
+* Merge config.js into config/settings.js
+* Remove sass, handlebars, bootstrap, etc
+* Get jshintrc dialed in
+* Get the --debug debugger working with jasmine-node, grunt watch, etc
 * Setup good app-level logging system
+* Give all of the promises labels.
+* Support syncing an entire Evernote account with getFilteredSyncChunk, LevelDB and Elasticsearch. (But get WYSIWYG working first)

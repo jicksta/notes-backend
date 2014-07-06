@@ -3,7 +3,6 @@ var express         = require('express'),
     RedisStore      = require('connect-redis')(session),
     path            = require('path'),
     modRewrite      = require('connect-modrewrite'),
-    // mongoose     = require('mongoose'),
     hbs             = require('express-hbs'),
     logger          = require('morgan'),
     bodyParser      = require('body-parser'),
@@ -14,11 +13,6 @@ var express         = require('express'),
     config          = require('./config'),
     routes          = require('./routes'),
     secrets         = require('./config/secrets');
-
-//mongoose.connect(config.database.url);
-//mongoose.connection.on('error', function () {
-//  console.log('mongodb connection error');
-//});
 
 var app = express();
 

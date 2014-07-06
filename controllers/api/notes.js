@@ -1,20 +1,31 @@
 var _ = require('underscore');
 
-exports.notebooks = function(request, response, ensession) {
+exports.notebooks = function(ensession) {
   return ensession.api.notebooks().then(function(notebooks) {
     return { notebook: notebooks.map(idFromGUID) };
   });
 };
 
-exports.notes = function(request, response, ensession) {
+exports.createNotebook = function(ensession, request, response) {
+  throw("TODO");
+};
+
+exports.notes = function(ensession) {
   return ensession.api.notes({max: 40}).then(function(result) {
     return { note: result.notes.map(idFromGUID) };
   });
 };
 
-exports.tags = function(request, response, ensession) {
+exports.note = function(ensession, request) {
+  var noteID = request.params.id;
+  return ensession.api.note(noteID).then(function(note) {
+    return { note: note };
+  });
+};
+
+exports.tags = function(ensession) {
   return ensession.api.tags().then(function(tags) {
-    return { tag: tags.map(idFromGUID)};
+    return { tag: tags.map(idFromGUID) };
   });
 };
 
