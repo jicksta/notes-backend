@@ -41,6 +41,35 @@ describe("EvernoteAPI", function() {
 
   });
 
+  describe("#createNotebook", function() {
+    it("creates a notebook which is immediately available to notebooks()", function(done) {
+      var notebookName = "Notebook " + Math.random(),
+          creation = api.createNotebook(notebookName);
+
+      expect(creation).toFinishWith(done, function(notebook) {
+        return api.notebooks().then(function(notebooks) {
+          var found = _.findWhere(notebooks, {guid: notebook.guid});
+          expect(found.name).toEqual(notebookName);
+        });
+      })
+    });
+  });
+
+
+  describe("#createTag", function() {
+
+    it("creates a tag which is immediately available to tags()", function(done) {
+      var tagName = "tag" + Math.random(),
+          creation = api.createTag(tagName);
+      expect(creation).toFinishWith(done, function(tag) {
+        return api.tags().then(function(tags) {
+          var found = _.findWhere(tags, {guid: tag.guid});
+          expect(found.name).toEqual(tagName);
+        });
+      })
+    });
+  });
+
   describe("#notes", function() {
     it('finds notes and returns the results object', function(done) {
       expect(cachedAPIMethod("notes")).toFinishWith(done, function(results) {
@@ -97,5 +126,7 @@ describe("EvernoteAPI", function() {
     var promise = cachedResponses[methodName] = api[methodName].call(api);
     return promise;
   }
+
+  function noop() {}
 
 });
