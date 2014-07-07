@@ -22,6 +22,10 @@ module.exports = {
     return typeof this.actual.then === 'function';
   },
 
+  toBeObject: function() {
+    return _.isObject(this.actual) && !_.isArray(this.actual);
+  },
+
   toFinish: function(done) {
     if(arguments[1]) throw("Do NOT pass a callback to toFinish(). Use toFinishWith() instead");
     var isNot = this.isNot;

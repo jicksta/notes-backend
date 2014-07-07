@@ -52,6 +52,18 @@ describe('Custom matchers', function() {
       });
     });
 
+    describe('toBeObject', function() {
+      it('recognizes objects', function() {
+        expect({}).toBeObject();
+        expect(new Date()).toBeObject();
+      });
+      it('recognizes non-objects', function() {
+        [[], 1, null, undefined, 9999999999999999.9999999999999999].forEach(function(bad) {
+          expect(bad).not.toBeObject();
+        });
+      });
+    });
+
   });
 
   describe('toBePromise', function() {
@@ -113,6 +125,15 @@ describe('Custom matchers', function() {
           expect(promise).not.toFinishWith(noop, noop);
         }).toThrow();
       });
+
+      it('invokes its callback with multiple parameters when resolving a RSVP.all composite promise', function(done) {
+        var one = RSVP.Promise.cast("one"),
+            two = RSVP.Promise.cast("two");
+        expect(RSVP.all([one, two])).toFinishWith(done, function(values) {
+          expect(values).toEqual(["one", "two"]);
+        });
+      });
+
     });
 
   });
