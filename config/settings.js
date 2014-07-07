@@ -4,7 +4,7 @@ var _ = require('underscore'),
 var defaults = {
   sandbox: true,
   logEvernoteResponses: true,
-  concurrentAPIRequests: 10,
+  concurrentAPIRequests: 25,
 
   oauthStartPath: "/api/oauth/start",
   oauthCallbackURL: "http://localhost:4000/api/oauth/finish",

@@ -53,9 +53,7 @@ describe("EvernoteAPI", function() {
     });
   });
 
-
   describe("#createTag", function() {
-
     it("creates a tag which is immediately available to tags()", function(done) {
       var tagName = "tag" + Math.random();
       expect(api.createTag(tagName)).toFinishWith(done, function(tag) {
@@ -66,7 +64,6 @@ describe("EvernoteAPI", function() {
       });
     });
   });
-
 
   describe("#createNote", function() {
 
@@ -165,11 +162,51 @@ describe("EvernoteAPI", function() {
   describe("#tags", function() {
 
     it('finds tags', function(done) {
-      expect(api.tags()).toFinishWith(done, function(tags) {
+      expect(cachedAPIMethod("tags")).toFinishWith(done, function(tags) {
         expect(tags).not.toBeEmpty();
       });
     });
 
+  });
+
+  describe("#untagAll", function() {
+
+    it("removes the tag from notes tagged with it", function(done) {
+      expect(cachedAPIMethod("notes")).toFinishWith(done, function(results) {
+        var taggedNote = _.find(results.notes, function(note) {
+          return !_.isEmpty(note.tagGuids);
+        });
+        expect(taggedNote).toBeDefined();
+
+        var victimGUID = taggedNote.tagGuids[0];
+        expect(victimGUID).toBeString();
+
+        return api.untagAll(victimGUID).then(function() {
+          return api.note(taggedNote.guid);
+        }).then(function(refreshedNote) {
+          expect(refreshedNote).toBeObject();
+          expect(refreshedNote.tagGuids).not.toContain(victimGUID);
+        });
+      });
+    });
+
+  });
+
+  describe("#deleteNote", function() {
+    it("deletes a note such that it is rendered inactive", function(done) {
+      expect(cachedAPIMethod("notes")).toFinishWith(done, function(results) {
+        var victim = _.last(results.notes);
+        expect(victim.guid).toBeString();
+        expect(victim.deleted).toEqual(null);
+        return api.deleteNote(victim.guid).then(function(updateSequenceNumber) {
+          expect(updateSequenceNumber).toBeNumber();
+          return api.note(victim.guid);
+        }).then(function(note) {
+          expect(note.guid).toEqual(victim.guid);
+          expect(note.deleted).toBeDefined();
+        });
+      });
+    });
   });
 
   function cachedAPIMethod(methodName) {

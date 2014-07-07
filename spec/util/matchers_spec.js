@@ -52,13 +52,25 @@ describe('Custom matchers', function() {
       });
     });
 
+    describe('toBeNumber', function() {
+      it('recognizes numbers', function() {
+        expect(0).toBeNumber();
+        expect(12.34).toBeNumber();
+      });
+      it('recognizes non-strings', function() {
+        [{}, null, undefined, new Date(), []].forEach(function(bad) {
+          expect(bad).not.toBeNumber();
+        });
+      });
+    });
+
     describe('toBeObject', function() {
       it('recognizes objects', function() {
         expect({}).toBeObject();
         expect(new Date()).toBeObject();
       });
       it('recognizes non-objects', function() {
-        [[], 1, null, undefined, 9999999999999999.9999999999999999].forEach(function(bad) {
+        [[], 1, null, undefined].forEach(function(bad) {
           expect(bad).not.toBeObject();
         });
       });

@@ -3,9 +3,9 @@ var settings = require('../../config/settings'),
 
 exports.me = function(request, response) {
   // return response.json(401, {error: "Not authenticated!"});
-  var session = EvernoteSession(request.session);
+  var session = new EvernoteSession(request.session);
 
-  if (session) {
+  if (session.isAuthenticated) {
     session.userJSON().then(function(userJSON) {
       response.json({user: userJSON});
     }).catch(function(err) {

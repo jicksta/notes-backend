@@ -18,6 +18,10 @@ module.exports = {
     return _.isString(this.actual);
   },
 
+  toBeNumber: function() {
+    return _.isNumber(this.actual);
+  },
+
   toBePromise: function() {
     return typeof this.actual.then === 'function';
   },
