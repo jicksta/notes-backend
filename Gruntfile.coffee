@@ -36,9 +36,9 @@ module.exports = (grunt) ->
     watch:
       all:
         files: WATCH_GLOBS
-      server:
-        files: '<%= jshint.server %>'
-        tasks: 'jshint:server'
+      # server:
+      #   files: '<%= jshint.server %>'
+      #   tasks: 'jshint:server'
       specs:
         files: [WATCH_GLOBS..., SPECS_GLOBS...]
         tasks: ['spec']
