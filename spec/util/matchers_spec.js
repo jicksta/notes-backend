@@ -9,21 +9,49 @@ describe('Custom matchers', function() {
     });
   });
 
-  describe('toBeEmpty', function() {
-    it('recognizes empty things', function() {
-      expect([]).toBeEmpty();
-      expect({}).toBeEmpty();
-      expect("").toBeEmpty();
-      expect(null).toBeEmpty();
-      expect(undefined).toBeEmpty();
+  describe('underscore-like matchers', function() {
+
+    describe('toBeEmpty', function() {
+      it('recognizes empty things', function() {
+        expect([]).toBeEmpty();
+        expect({}).toBeEmpty();
+        expect("").toBeEmpty();
+        expect(null).toBeEmpty();
+        expect(undefined).toBeEmpty();
+      });
+
+      it('recognizes non-empty things', function() {
+        var good = [{foo: 1}, [0], [false], [undefined], [null, null]];
+        good.forEach(function(item) {
+          expect(item).not.toBeEmpty();
+        })
+      });
     });
 
-    it('recognizes non-empty things', function() {
-      var good = [{foo: 1}, [0], [false], [undefined], [null, null]];
-      good.forEach(function(item) {
-        expect(item).not.toBeEmpty();
-      })
+    describe('toBeArray', function() {
+      it('recognizes arrays', function() {
+        expect([]).toBeArray();
+        expect([1]).toBeArray();
+      });
+      it('recognizes non-arrays', function() {
+        [{}, 1, null, undefined, new Date()].forEach(function(bad) {
+          expect(bad).not.toBeArray();
+        });
+      });
     });
+
+    describe('toBeString', function() {
+      it('recognizes strings', function() {
+        expect("").toBeString();
+        expect("jay").toBeString();
+      });
+      it('recognizes non-strings', function() {
+        [{}, 1, null, undefined, new Date()].forEach(function(bad) {
+          expect(bad).not.toBeString();
+        });
+      });
+    });
+
   });
 
   describe('toBePromise', function() {

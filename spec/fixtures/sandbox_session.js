@@ -1,3 +1,7 @@
+// To sign back with this sandbox-only account: (for anyone to use)
+// username: CAC8728EEE@mailinator.com
+// password: p^p?wR2D7H
+
 module.exports = {
   cookie: {
     originalMaxAge: null,
@@ -5,13 +9,13 @@ module.exports = {
     httpOnly: true,
     path: '/'
   },
-  OAUTH_SECRET: 'BC041DD2A4C919FEA2DE38CD0C9DCAFB',
+  OAUTH_SECRET: 'CAC8728EEEC8431D8B332F8213BE3961',
   evernote: {
-    accessToken: 'S=s1:U=8ef39:E=14e65861f63:C=1470dd4f148:P=185:A=jicksta-5757:V=2:H=8f49c7e0fb8a2ae316a0e26d78357034',
+    accessToken: 'S=s1:U=8ef39:E=14e65ae01e8:C=1470dfcd438:P=185:A=jicksta-5757:V=2:H=e2a072740b723a3c711977004dad7566',
     accessTokenSecret: '',
     userID: '585529',
     shard: 's1',
-    expires: '1436222365539',
+    expires: '1436224979432',
     notestore: 'https://sandbox.evernote.com/shard/s1/notestore',
     webapi: 'https://sandbox.evernote.com/shard/s1/'
   }

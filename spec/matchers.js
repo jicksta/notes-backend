@@ -10,6 +10,14 @@ module.exports = {
     return _.isEmpty(this.actual);
   },
 
+  toBeArray: function() {
+    return _.isArray(this.actual);
+  },
+
+  toBeString: function() {
+    return _.isString(this.actual);
+  },
+
   toBePromise: function() {
     return typeof this.actual.then === 'function';
   },
@@ -32,6 +40,7 @@ module.exports = {
 
   toFinishWith: function(done, fn) {
     if(this.isNot) throw("expect().not negation not allowed for .toFinishWith()");
+    if(arguments.length !== 2) throw("You must pass two arguments to toFinishWith");
 
     this.actual.then(fn).catch(function(err) {
       var errMessage = err.stack ? err.stack : err.toString();
