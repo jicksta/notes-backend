@@ -1,4 +1,5 @@
-var EvernoteSession = require('../../lib/evernote_session');
+var settings = require('../../config/settings'),
+    EvernoteSession = require('../../lib/evernote_session');
 
 exports.me = function(request, response) {
   // return response.json(401, {error: "Not authenticated!"});
@@ -15,7 +16,7 @@ exports.me = function(request, response) {
     if (request.xhr) {
       response.json(401, {error: "Not authenticated!"});
     } else {
-      response.redirect("/api/v1/oauth/start");
+      response.redirect(settings.oauthStartPath);
     }
   }
 };

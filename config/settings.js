@@ -1,7 +1,20 @@
-module.exports = {
-  oauthSuccessRedirectURL: "/notes",
-  oauthCallbackURL: "http://localhost:4000/api/v1/oauth/finish",
+var _ = require('underscore'),
+    env = require('./environment')();
+
+var defaults = {
   sandbox: true,
   logEvernoteResponses: true,
-  concurrentRequests: 10
+  concurrentAPIRequests: 10,
+
+  oauthStartPath: "/api/oauth/start",
+  oauthCallbackURL: "http://localhost:4000/api/oauth/finish",
+  oauthSuccessRedirectURL: "/notes"
 };
+
+var overrides = {
+  development: {
+    sandbox: false
+  }
+};
+
+module.exports =  _.extend(defaults, overrides[env]);

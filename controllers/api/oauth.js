@@ -20,13 +20,13 @@ exports.oauthFinish = function(request, response) {
 
   auth.then(function(result) {
     _.extend(request.session, result);
-    response.redirect(settings.oauthSuccessRedirectURL)
+    response.redirect(settings.oauthSuccessRedirectURL);
   }, errorHandler(response));
 };
 
 function errorHandler(response) {
   return function() {
     var args = Array.prototype.slice.apply(arguments, 0);
-    response.send(500, {error: args})
+    response.send(500, {error: args});
   };
 }
