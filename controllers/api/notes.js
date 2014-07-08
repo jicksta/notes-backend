@@ -1,4 +1,6 @@
-var _ = require('underscore');
+var _ = require('underscore'),
+    settings = require('../../config/settings'),
+    NoteTransformer = require('../../transformers/note_transformer');
 
 exports.notebooks = function(ensession) {
   return ensession.api.notebooks().then(function(notebooks) {
@@ -6,14 +8,12 @@ exports.notebooks = function(ensession) {
   });
 };
 
-exports.createNotebook = function(ensession, request, response) {
+exports.createNotebook = function(ensession, request) {
   throw("TODO");
 };
 
-exports.notes = function(ensession) {
-  return ensession.api.notes({max: 40}).then(function(result) {
-    return { note: result.notes.map(idFromGUID) };
-  });
+exports.notes = function(ensession, request) {
+  return ensession.api.notes(paginate(request.params)).then(NoteTransformer.formatNotesResponse).then(wrapWith("note"));
 };
 
 exports.note = function(ensession, request) {
@@ -29,6 +29,19 @@ exports.tags = function(ensession) {
   });
 };
 
+function wrapWith(wrapping) {
+  return function(value) {
+    var obj = {};
+    obj[wrapping] = value;
+    return obj;
+  }
+}
+
+function paginate(params) {
+  var perPage = params.per_page || settings.paginationPageSizeDefault;
+  if (perPage > settings.paginationPageSizeMax) throw "Pagination param too large!";
+  return {max: perPage};
+}
 
 function idFromGUID(obj) {
   return _.extend({id: obj.guid}, obj);

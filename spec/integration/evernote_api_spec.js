@@ -3,15 +3,18 @@ var _ = require('underscore'),
     Evernote = require('evernote').Evernote,
     EvernoteAPI = require('../../lib/evernote_api'),
     EvernoteSession = require('../../lib/evernote_session'),
-    sandboxSession = require('../fixtures/sandbox_session');
+    sandboxSession = require('../fixtures/sandbox_session'),
+    PromiseErrorSpy = require('../util/promise_error_spy'),
+    fixtures = require('../util/fixtures');
 
 describe("EvernoteAPI", function() {
 
-  var ensession, api;
+  var ensession, api, onerror;
   var cachedResponses = {};
 
   beforeEach(function() {
     ensession = new EvernoteSession(sandboxSession);
+    onerror = PromiseErrorSpy();
     api = ensession.api;
   });
 
@@ -130,6 +133,7 @@ describe("EvernoteAPI", function() {
   });
 
   describe("#notesWithContent", function() {
+
     it('finds notes and returns an array of notes with content properties', function(done) {
       expect(cachedAPIMethod("notesWithContent")).toFinishWith(done, function(notes) {
         expect(notes).toBeArray();
@@ -185,7 +189,7 @@ describe("EvernoteAPI", function() {
           return api.note(taggedNote.guid);
         }).then(function(refreshedNote) {
           expect(refreshedNote).toBeObject();
-          expect(refreshedNote.tagGuids).not.toContain(victimGUID);
+          expect(refreshedNote.tagGuids || []).not.toContain(victimGUID);
         });
       });
     });
@@ -207,6 +211,59 @@ describe("EvernoteAPI", function() {
         });
       });
     });
+  });
+
+  describe("fixtures", function() {
+
+    fixture("notes_result", function() {
+      return cachedAPIMethod("notes").then(function(result) {
+        expect(result.notes.length).toBeGreaterThan(2);
+        return result;
+      });
+    });
+
+    fixture("note", function() {
+      return cachedAPIMethod("notes").then(function(result) {
+        var note = result.notes[0];
+        expect(note.guid).toBeString();
+        expect(note.deleted).toBeFalsy();
+        return note;
+      });
+    });
+
+    fixture("notebooks", function() {
+      return cachedAPIMethod("notebooks").then(function(notebooks) {
+        expect(notebooks.length).toBeGreaterThan(2);
+        return notebooks;
+      });
+    });
+
+    fixture("notebook", function() {
+      return cachedAPIMethod("notebooks").then(function(notebooks) {
+        var notebook = notebooks[0];
+        expect(notebook.guid).toBeString();
+        return notebook;
+      });
+    });
+
+    function fixture(fixtureName, promiseFactory) {
+      var fixtureExists = fixtures.exists(fixtureName);
+      if (!fixtureExists) {
+        it("creates the " + fixtureName + " fixture", function(done) {
+          var promise = promiseFactory(api);
+
+          promise.then(function(result) {
+            if (_.isObject(result)) {
+              fixtures.save(fixtureName, result);
+              expect(fixtures.exists(fixtureName)).toEqual(true);
+            } else {
+              expect(_.isObject(result)).toEqual(true, "non-object resolved from promise");
+            }
+          }).catch(onerror).finally(done);
+        });
+      }
+    }
+
   });
 
   function cachedAPIMethod(methodName) {

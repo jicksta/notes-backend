@@ -1,4 +1,5 @@
 var ConcurrencyFunnel = require('../../lib/concurrency_funnel'),
+    SpyPromise = require('../util/spy_promise'),
     RSVP = require('rsvp'),
     _ = require('underscore');
 
@@ -107,23 +108,8 @@ describe('ConcurrencyFunnel', function() {
   }
 
   function makePromise(label) {
-    var resolve, reject;
-
-    var promise = new RSVP.Promise(function(yep, nope) {
-      resolve = yep;
-      reject = nope;
-    });
-
-    promise.label = label.toString();
-    promise.resolve = resolve;
-    promise.reject = reject;
+    var promise = SpyPromise(label);
     promise.started = false;
-    promise.settled = false;
-
-    promise.finally(function() {
-      promise.settled = true;
-    });
-
     return promise;
   }
 

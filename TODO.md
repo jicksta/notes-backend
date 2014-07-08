@@ -4,6 +4,7 @@
 * Creating notes
 * Updating notes
 * Deleting notes
+* Finding notes with pagination and per_page params
 * Creating notebooks
 * Creating tags
 * Deleting tags
@@ -33,23 +34,30 @@
 
 ## Testing tasks
 
+* Port away from jasmine to chai / mocha / whatever
 * Controller specs
+* Automatically handle EDAMSystemException { errorCode : 19, message : null, rateLimitDuration : 14 } by waiting duration seconds and retrying
 * Create an afterAll in evernote_api_spec that checks cached responses for .length > 40 and then trims them down to 10 using ConcurrenyFunnel
 * Get the --debug debugger working with jasmine-node, grunt watch, etc
 * Rename toFinishWith to be .continues, .resolves, etc
 * Setup two testing sessions, one for tag creating and one for everything else. Prevents pollution of main test account.
+* Rename toFinish() to be toResolve? e.g. notes_controller_spec asserting the action not.toFinish() is lame.
+
 
 ## Organizational tasks
 
 * Merge config.js into config/settings.js
+* Move references of EvernoteAction into the controllers that actually expose those actions
 * Remove sass, handlebars, bootstrap, etc
 * Give all of the promises labels.
 * Move controllers out of the api directory and remove the index controller
+* Create a "meta" dir and a "support" for test helpers and their specs
 
 ## Node.js
 
 * Remove /api/api rewrite hack
 * Refresh my memory on prototypal and parasitic inheritance strategies
+* Move to lodash
 
 ## Database
 
