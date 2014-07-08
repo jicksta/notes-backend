@@ -3,7 +3,8 @@ var _ = require('underscore'),
     EvernoteSession = require('../../lib/evernote_session'),
     sandboxSession = require('../fixtures/sandbox_session'),
     SpyPromise = require('../support/spy_promise'),
-    transformer = require('../../transformers/note_transformer'),
+    NoteTransformer = require('../../transformers/note_transformer'),
+    NotebookTransformer = require('../../transformers/notebook_transformer'),
     settings = require('../../config/settings'),
     fixtures = require('../support/fixtures');
 
@@ -30,8 +31,8 @@ describe("Notes controllers", function() {
       var rawFixture, formattedFixture;
       beforeEach(function() {
         rawFixture = fixtures.load('notes_result');
-        formattedFixture = transformer.formatNotesResponse(rawFixture);
         api.notes.promise.resolve(rawFixture);
+        formattedFixture = NoteTransformer.formatNotesResponse(rawFixture);
       });
 
       it("wraps and transforms the notes from the API", function(done) {
@@ -67,6 +68,28 @@ describe("Notes controllers", function() {
           controller.notes(ensession, requestWithParams({per_page: 101}));
         }).toThrow();
         expect(api.notes).not.toHaveBeenCalled();
+      });
+
+    });
+
+  });
+
+  describe('#notebooks', function() {
+
+    describe('responses', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = fixtures.load('notebooks');
+        api.notebooks.promise.resolve(rawFixture);
+        formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+      });
+
+      it("wraps and transforms the notebooks from the API", function(done) {
+        controller.notebooks(ensession, request()).catch(onerror).then(function(response) {
+          expect(api.notebooks).toHaveBeenCalled();
+          expect(response.notebook).toEqual(formattedFixture);
+        }).finally(done);
       });
 
     });

@@ -1,19 +1,18 @@
 var _ = require('underscore'),
     settings = require('../../config/settings'),
-    NoteTransformer = require('../../transformers/note_transformer');
+    NoteTransformer = require('../../transformers/note_transformer'),
+    NotebookTransformer = require('../../transformers/notebook_transformer');
+
+exports.notes = function(ensession, request) {
+  return ensession.api.notes(paginate(request.params)).then(NoteTransformer.formatNotesResponse).then(wrapWith("note"));
+};
 
 exports.notebooks = function(ensession) {
-  return ensession.api.notebooks().then(function(notebooks) {
-    return { notebook: notebooks.map(idFromGUID) };
-  });
+  return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
 
 exports.createNotebook = function(ensession, request) {
   throw("TODO");
-};
-
-exports.notes = function(ensession, request) {
-  return ensession.api.notes(paginate(request.params)).then(NoteTransformer.formatNotesResponse).then(wrapWith("note"));
 };
 
 exports.note = function(ensession, request) {

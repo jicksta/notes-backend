@@ -59,6 +59,7 @@
 * Remove /api/api rewrite hack
 * Refresh my memory on prototypal and parasitic inheritance strategies
 * Move to lodash
+* Rename transformer to translator?
 
 ## Database
 

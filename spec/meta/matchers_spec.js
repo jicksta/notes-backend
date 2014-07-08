@@ -64,6 +64,18 @@ describe('Custom matchers', function() {
       });
     });
 
+    describe('toBeBoolean', function() {
+      it('recognizes numbers', function() {
+        expect(true).toBeBoolean();
+        expect(false).toBeBoolean();
+      });
+      it('recognizes non-booleans', function() {
+        [{}, null, undefined, new Date(), [], 0, ""].forEach(function(bad) {
+          expect(bad).not.toBeBoolean();
+        });
+      });
+    });
+
     describe('toBeObject', function() {
       it('recognizes objects', function() {
         expect({}).toBeObject();
@@ -73,6 +85,13 @@ describe('Custom matchers', function() {
         [[], 1, null, undefined].forEach(function(bad) {
           expect(bad).not.toBeObject();
         });
+      });
+    });
+
+    describe('toHaveKey', function() {
+      it('walks the happy path', function() {
+        expect({foo: 123}).toHaveKey("foo");
+        expect({foo: 123}).not.toHaveKey("bar");
       });
     });
 

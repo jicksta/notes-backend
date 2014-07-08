@@ -14,6 +14,10 @@ module.exports = {
     return _.isArray(this.actual);
   },
 
+  toBeBoolean: function() {
+    return _.isBoolean(this.actual);
+  },
+
   toBeString: function() {
     return _.isString(this.actual);
   },
@@ -28,6 +32,10 @@ module.exports = {
 
   toBeObject: function() {
     return _.isObject(this.actual) && !_.isArray(this.actual);
+  },
+
+  toHaveKey: function(key) {
+    return key in this.actual;
   },
 
   toFinish: function(done) {
