@@ -32,6 +32,8 @@ module.exports = (grunt) ->
         extensions: 'js'
         specNameMatcher: 'spec'
       all: ['spec/']
+      fast: ['spec/helpers', 'spec/controllers', 'spec/lib', 'spec/meta', 'spec/transformers']
+      integration: ['spec/helpers', 'spec/integration']
 
     watch:
       all:
@@ -41,7 +43,10 @@ module.exports = (grunt) ->
       #   tasks: 'jshint:server'
       specs:
         files: [WATCH_GLOBS..., SPECS_GLOBS...]
-        tasks: ['spec']
+        tasks: ['specs']
+      integration:
+        files: [WATCH_GLOBS..., SPECS_GLOBS...]
+        tasks: ['specs:integration']
 
     concurrent:
       tasks: ['node-inspector', 'watch']
@@ -53,5 +58,6 @@ module.exports = (grunt) ->
 
   require('matchdep').filterDev('grunt-*').forEach @loadNpmTasks
   @registerTask 'default', ['jshint', 'concurrent']
-  @registerTask 'spec', ['jasmine_node']
+  @registerTask 'specs', ['jasmine_node:fast']
+  @registerTask 'specs:integration', ['jasmine_node:all']
 

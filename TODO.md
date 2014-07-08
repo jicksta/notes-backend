@@ -35,6 +35,7 @@
 ## Testing tasks
 
 * Port away from jasmine to chai / mocha / whatever
+* Switch to karma-jasmine: https://github.com/karma-runner/karma-jasmine with Jasmine 2.0 (or not?)
 * Controller specs
 * Automatically handle EDAMSystemException { errorCode : 19, message : null, rateLimitDuration : 14 } by waiting duration seconds and retrying
 * Create an afterAll in evernote_api_spec that checks cached responses for .length > 40 and then trims them down to 10 using ConcurrenyFunnel
@@ -42,7 +43,7 @@
 * Rename toFinishWith to be .continues, .resolves, etc
 * Setup two testing sessions, one for tag creating and one for everything else. Prevents pollution of main test account.
 * Rename toFinish() to be toResolve? e.g. notes_controller_spec asserting the action not.toFinish() is lame.
-
+* Clean up the spec names to be more nicely nested
 
 ## Organizational tasks
 
