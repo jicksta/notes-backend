@@ -1,6 +1,6 @@
 var _ = require("underscore"),
     Evernote = require("evernote").Evernote,
-    fixtures = require("../util/fixtures"),
+    fixtures = require("../support/fixtures"),
     transformer = require("../../transformers/note_transformer");
 
 describe('NoteTransformer', function() {

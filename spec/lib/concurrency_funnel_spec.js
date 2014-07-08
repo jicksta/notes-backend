@@ -1,5 +1,5 @@
 var ConcurrencyFunnel = require('../../lib/concurrency_funnel'),
-    SpyPromise = require('../util/spy_promise'),
+    SpyPromise = require('../support/spy_promise'),
     RSVP = require('rsvp'),
     _ = require('underscore');
 

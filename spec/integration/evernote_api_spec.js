@@ -4,8 +4,8 @@ var _ = require('underscore'),
     EvernoteAPI = require('../../lib/evernote_api'),
     EvernoteSession = require('../../lib/evernote_session'),
     sandboxSession = require('../fixtures/sandbox_session'),
-    PromiseErrorSpy = require('../util/promise_error_spy'),
-    fixtures = require('../util/fixtures');
+    PromiseErrorSpy = require('../support/promise_error_spy'),
+    fixtures = require('../support/fixtures');
 
 describe("EvernoteAPI", function() {
 

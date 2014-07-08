@@ -2,10 +2,10 @@ var _ = require('underscore'),
     controller = require('../../controllers/api/notes'),
     EvernoteSession = require('../../lib/evernote_session'),
     sandboxSession = require('../fixtures/sandbox_session'),
-    SpyPromise = require('../util/spy_promise'),
+    SpyPromise = require('../support/spy_promise'),
     transformer = require('../../transformers/note_transformer'),
     settings = require('../../config/settings'),
-    fixtures = require('../util/fixtures');
+    fixtures = require('../support/fixtures');
 
 describe("Notes controllers", function() {
 

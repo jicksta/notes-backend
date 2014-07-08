@@ -1,4 +1,4 @@
-var fixtures = require('../util/fixtures'),
+var fixtures = require('../support/fixtures'),
     fs = require('fs');
 describe("Fixtures", function() {
 
