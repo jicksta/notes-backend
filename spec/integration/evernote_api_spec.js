@@ -182,6 +182,7 @@ describe("EvernoteAPI", function() {
         });
         expect(taggedNote).toBeDefined();
 
+
         var victimGUID = taggedNote.tagGuids[0];
         expect(victimGUID).toBeString();
 
@@ -235,6 +236,13 @@ describe("EvernoteAPI", function() {
       return cachedAPIMethod("notebooks").then(function(notebooks) {
         expect(notebooks.length).toBeGreaterThan(2);
         return notebooks;
+      });
+    });
+
+    fixture("tags", function() {
+      return cachedAPIMethod("tags").then(function(tags) {
+        expect(tags.length).toBeGreaterThan(2);
+        return tags;
       });
     });
 

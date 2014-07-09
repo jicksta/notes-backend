@@ -1,5 +1,5 @@
 module.exports = function() {
-  jasmine.createSpy("PromiseErrorSpy").andCallFake(function(err) {
+  return jasmine.createSpy("PromiseErrorSpy").andCallFake(function(err) {
     if(err.stack) {
       console.error(err.stack);
     } else {

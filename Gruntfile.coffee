@@ -5,6 +5,7 @@ module.exports = (grunt) ->
     'controllers/**/*.js',
     'lib/**/*.js',
     'models/**/*.js',
+    'transformers/**/*.js',
     'routes/**/*.js',
     'app.js'
   ]
@@ -60,4 +61,3 @@ module.exports = (grunt) ->
   @registerTask 'default', ['jshint', 'concurrent']
   @registerTask 'specs', ['jasmine_node:fast']
   @registerTask 'specs:integration', ['jasmine_node:all']
-

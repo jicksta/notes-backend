@@ -1,7 +1,8 @@
 var _ = require('underscore'),
     settings = require('../../config/settings'),
     NoteTransformer = require('../../transformers/note_transformer'),
-    NotebookTransformer = require('../../transformers/notebook_transformer');
+    NotebookTransformer = require('../../transformers/notebook_transformer'),
+    TagTransformer = require('../../transformers/tag_transformer');
 
 exports.notes = function(ensession, request) {
   return ensession.api.notes(paginate(request.params)).then(NoteTransformer.formatNotesResponse).then(wrapWith("note"));
@@ -9,6 +10,10 @@ exports.notes = function(ensession, request) {
 
 exports.notebooks = function(ensession) {
   return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
+exports.tags = function(ensession) {
+  return ensession.api.tags().then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
 exports.createNotebook = function(ensession, request) {
@@ -19,12 +24,6 @@ exports.note = function(ensession, request) {
   var noteID = request.params.id;
   return ensession.api.note(noteID).then(function(note) {
     return { note: note };
-  });
-};
-
-exports.tags = function(ensession) {
-  return ensession.api.tags().then(function(tags) {
-    return { tag: tags.map(idFromGUID) };
   });
 };
 
