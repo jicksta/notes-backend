@@ -175,6 +175,20 @@ describe("EvernoteAPI", function() {
 
   });
 
+  describe("#tag", function() {
+
+    it('finds a tag by a GUID', function(done) {
+      expect(cachedAPIMethod("tags")).toFinishWith(done, function(tags) {
+        expect(tags).not.toBeEmpty();
+        var queriedTag = _.last(tags);
+        return api.tag(queriedTag.guid).then(function(tag) {
+          expect(tag.guid).toEqual(queriedTag.guid);
+        });
+      });
+    });
+
+  });
+
   describe("#untagAll", function() {
 
     it("removes the tag from notes tagged with it", function(done) {
@@ -200,18 +214,51 @@ describe("EvernoteAPI", function() {
   });
 
   describe("#updateNote", function() {
-    it("updates the a note", function(done) {
+    it("updates the note", function(done) {
       expect(cachedAPIMethod("notes")).toFinishWith(done, function(results) {
         var victim = _.last(results.notes),
             newTitle = "New title " + Math.random(),
             newContent = utils.wrapNoteContent("Content for " + newTitle);
+        expect(victim).not.toBeInstanceOf(Evernote.Note);
         _.extend(victim, {title: newTitle, content: newContent});
         expect(victim.guid).toBeString();
         return api.updateNote(victim).then(function(note) {
           expect(note.guid).toEqual(victim.guid);
           expect(note.title).toEqual(newTitle);
-          return api.note(victim.guid);
         })
+      });
+    });
+  });
+
+  describe("#notebook", function() {
+
+    it('finds a notebook by a GUID', function(done) {
+      expect(cachedAPIMethod("notebooks")).toFinishWith(done, function(notebooks) {
+        expect(notebooks).not.toBeEmpty();
+        var queriedNotebook = _.last(notebooks);
+        return api.notebook(queriedNotebook.guid).then(function(notebook) {
+          expect(notebook.guid).toEqual(queriedNotebook.guid);
+        });
+      });
+    });
+
+  });
+
+  describe("#updateNotebook", function() {
+    it("updates the notebook", function(done) {
+      expect(cachedAPIMethod("notebooks")).toFinishWith(done, function(notebooks) {
+        var victim = _.clone(_.last(notebooks)),
+            newName = "New name " + Math.random();
+        expect(victim).not.toBeInstanceOf(Evernote.Notebook);
+        expect(victim.guid).toBeString();
+        victim.name = newName;
+        return api.updateNotebook(victim).then(function(updateSequenceNumber) {
+          expect(updateSequenceNumber).toBeNumber();
+          return api.notebook(victim.guid);
+        }).then(function(notebook) {
+          expect(notebook.guid).toEqual(victim.guid);
+          expect(notebook.name).toEqual(newName);
+        });
       });
     });
   });

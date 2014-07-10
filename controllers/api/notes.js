@@ -26,12 +26,26 @@ exports.deleteNote = function(ensession, request) {
   return ensession.api.deleteNote(noteID).then(deleteResponse);
 };
 
+exports.notebook = function(ensession, request) {
+  var notebookID = request.params.id;
+  return ensession.api.notebook(notebookID).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
 exports.notebooks = function(ensession) {
   return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
 
 exports.createNotebook = function(ensession, request) {
   return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
+exports.updateNotebook = function(ensession, request) {
+  return ensession.api.updateNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
+exports.tag = function(ensession, request) {
+  var tagID = request.params.id;
+  return ensession.api.tag(tagID).then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
 exports.tags = function(ensession) {
@@ -45,6 +59,10 @@ exports.createTag = function(ensession, request) {
 exports.deleteTag = function(ensession, request) {
   var tagID = request.params.id;
   return ensession.api.untagAll(tagID).then(deleteResponse);
+};
+
+exports.updateTag = function(ensession, request) {
+  return ensession.api.updateTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
 exports.deleteNotebook = function(ensession, request) {

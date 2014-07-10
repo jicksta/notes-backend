@@ -138,7 +138,7 @@ describe("Notes controllers", function() {
         api.createNotebook.promise.resolve(rawFixture);
       });
 
-      it("creates a notebook with the name given in the params", function(done) {
+      it("creates a notebook", function(done) {
         controller.createNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
           expect(api.createNotebook).toHaveBeenCalled();
           expect(response.notebook).toEqual(formattedFixture);
@@ -219,6 +219,103 @@ describe("Notes controllers", function() {
       });
 
   });
+
+  describe('#updateNote', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = _.extend(fixtures.load('note'), {title: "New Title"});
+        formattedFixture = NoteTransformer.formatNote(rawFixture);
+        api.updateNote.promise.resolve(rawFixture);
+      });
+
+      it("updates the note", function(done) {
+        controller.updateNote(ensession, requestWithParams({note: formattedFixture})).catch(onerror).then(function(response) {
+          var thriftyNote = api.updateNote.mostRecentCall().args[0];
+          expect(thriftyNote).toBeInstanceOf(Evernote.Note);
+          expect(thriftyNote.title).toEqual("New Title");
+          expect(response.note).toEqual(formattedFixture);
+        }).finally(done);
+      });
+
+  });
+
+  describe('#tag', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('tags')[0];
+      api.tag.promise.resolve(rawFixture);
+      formattedFixture = TagTransformer.formatTag(rawFixture);
+    });
+
+    it("wraps and transforms the tags from the API", function(done) {
+      controller.tag(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(tag) {
+        expect(api.tag).toHaveBeenCalled();
+        expect(tag.tag).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#notebook', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('notebooks')[0];
+      api.notebook.promise.resolve(rawFixture);
+      formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+    });
+
+    it("wraps and transforms the tags from the API", function(done) {
+      controller.notebook(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(notebook) {
+        expect(api.notebook).toHaveBeenCalled();
+        expect(notebook.notebook).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#updateNotebook', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = _.extend(fixtures.load('notebook'), {name: "New Name"});
+      formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+      api.updateNotebook.promise.resolve(rawFixture);
+    });
+
+    it("updates the notebook", function(done) {
+      controller.updateNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
+        var thriftyNotebook = api.updateNotebook.mostRecentCall().args[0];
+        expect(thriftyNotebook).toBeInstanceOf(Evernote.Notebook);
+        expect(thriftyNotebook.name).toEqual("New Name");
+        expect(response.notebook).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#updateTag', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = _.extend(fixtures.load('tags')[0], {name: "New Name"});
+      formattedFixture = TagTransformer.formatTag(rawFixture);
+      api.updateTag.promise.resolve(rawFixture);
+    });
+
+    it("updates the tag", function(done) {
+      controller.updateTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
+        var thriftyTag = api.updateTag.mostRecentCall().args[0];
+        expect(thriftyTag).toBeInstanceOf(Evernote.Tag);
+        expect(thriftyTag.name).toEqual("New Name");
+        expect(response.tag).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
 
   function apiSpy(api) {
     _.functions(api).forEach(function(methodName) {
