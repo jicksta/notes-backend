@@ -56,23 +56,19 @@ exports.createTag = function(ensession, request) {
   return ensession.api.createTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
+exports.updateTag = function(ensession, request) {
+  return ensession.api.updateTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
+};
+
 exports.deleteTag = function(ensession, request) {
   var tagID = request.params.id;
   return ensession.api.untagAll(tagID).then(deleteResponse);
 };
 
-exports.updateTag = function(ensession, request) {
-  return ensession.api.updateTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
-};
-
-exports.deleteNotebook = function(ensession, request) {
-  var notebookID = request.params.id;
-  return ensession.api.deleteNotebook(notebookID).then(deleteResponse);
-};
-
 
 ///////////////////////////////////////////
 ///////////////////////////////////////////
+
 
 function wrapWith(wrapping) {
   return function(value) {

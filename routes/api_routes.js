@@ -27,10 +27,10 @@ module.exports.install = function(router) {
 
   router.put("/api/notes/:id", EN(notes.updateNote));
   router.put("/api/notebooks/:id", EN(notes.updateNotebook));
-  router.put("/api/tags/:id", EN(notes.updateTag));  //// <------- TODO!!!!!!!!!!!!!!!!!!!!!!
+  router.put("/api/tags/:id", EN(notes.updateTag));
 
   router.delete("/api/notes/:id", EN(notes.deleteNote));
-  router.delete("/api/notebooks/:id", EN(notes.deleteNotebook));
+  //router.delete("/api/notebooks/:id", EN(notes.deleteNotebook)); // EN doesn't support this.
   router.delete("/api/tags/:id", EN(notes.deleteTag));
 
 };

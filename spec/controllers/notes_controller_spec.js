@@ -24,6 +24,25 @@ describe("Notes controllers", function() {
     expect(onerror).not.toHaveBeenCalled();
   });
 
+  describe('#note', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = noteFixtureWithContent("notes#note");
+      api.note.promise.resolve(rawFixture);
+      formattedFixture = NoteTransformer.formatNote(rawFixture);
+    });
+
+    it("returns the note with its body", function(done) {
+      controller.note(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(response) {
+        expect(api.note).toHaveBeenCalledWith(rawFixture.guid);
+        expect(response.note).toEqual(formattedFixture);
+        expect(response.note.body).toBeString(); // so the server can post-process a note for the client
+      }).finally(done);
+    });
+
+  });
+
   describe('#notes', function() {
 
     describe('responses', function() {
@@ -74,79 +93,6 @@ describe("Notes controllers", function() {
 
   });
 
-  describe('#notebooks', function() {
-
-    var rawFixture, formattedFixture;
-    beforeEach(function() {
-      rawFixture = fixtures.load('notebooks');
-      api.notebooks.promise.resolve(rawFixture);
-      formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
-    });
-
-    it("wraps and transforms the notebooks from the API", function(done) {
-      controller.notebooks(ensession, request()).catch(onerror).then(function(response) {
-        expect(api.notebooks).toHaveBeenCalled();
-        expect(response.notebook).toEqual(formattedFixture);
-      }).finally(done);
-    });
-
-  });
-
-  describe('#note', function() {
-
-    var rawFixture, formattedFixture;
-    beforeEach(function() {
-      rawFixture = noteFixtureWithContent("notes#note");
-      api.note.promise.resolve(rawFixture);
-      formattedFixture = NoteTransformer.formatNote(rawFixture);
-    });
-
-    it("returns the note with its body", function(done) {
-      controller.note(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(response) {
-        expect(api.note).toHaveBeenCalledWith(rawFixture.guid);
-        expect(response.note).toEqual(formattedFixture);
-        expect(response.note.body).toBeString(); // so the server can post-process a note for the client
-      }).finally(done);
-    });
-
-  });
-
-  describe('#tags', function() {
-
-    var rawFixture, formattedFixture;
-    beforeEach(function() {
-      rawFixture = fixtures.load('tags');
-      api.tags.promise.resolve(rawFixture);
-      formattedFixture = TagTransformer.formatTag(rawFixture);
-    });
-
-    it("wraps and transforms the tags from the API", function(done) {
-      controller.tags(ensession, request()).catch(onerror).then(function(tags) {
-        expect(api.tags).toHaveBeenCalled();
-        expect(tags.tag).toEqual(formattedFixture);
-      }).finally(done);
-    });
-
-  });
-
-  describe('#createNotebook', function() {
-
-      var rawFixture, formattedFixture;
-      beforeEach(function() {
-        rawFixture = fixtures.load('notebook');
-        formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
-        api.createNotebook.promise.resolve(rawFixture);
-      });
-
-      it("creates a notebook", function(done) {
-        controller.createNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
-          expect(api.createNotebook).toHaveBeenCalled();
-          expect(response.notebook).toEqual(formattedFixture);
-        }).finally(done);
-      });
-
-  });
-
   describe('#createNote', function() {
 
       var rawFixture, formattedFixture;
@@ -161,60 +107,6 @@ describe("Notes controllers", function() {
           expect(api.createNote).toHaveBeenCalledWith(formattedFixture);
           expect(response.note).toEqual(formattedFixture);
           expect(response.note).toHaveKey("body");
-        }).finally(done);
-      });
-
-  });
-
-  describe('#deleteNote', function() {
-
-      var victimGuid, updateSequenceNumber;
-      beforeEach(function() {
-        victimGuid = _.uniqueId("note");
-        updateSequenceNumber = 12345;
-        api.deleteNote.promise.resolve(updateSequenceNumber);
-      });
-
-      it("deletes the note and returns an empty object", function(done) {
-        controller.deleteNote(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
-          expect(api.deleteNote).toHaveBeenCalledWith(victimGuid);
-          expect(response).toEqual({});
-        }).finally(done);
-      });
-
-  });
-
-  describe('#createTag', function() {
-
-      var rawFixture, formattedFixture;
-      beforeEach(function() {
-        rawFixture = fixtures.load('tags')[0];
-        formattedFixture = TagTransformer.formatTag(rawFixture);
-        api.createTag.promise.resolve(rawFixture);
-      });
-
-      it("creates a tag", function(done) {
-        controller.createTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
-          expect(api.createTag).toHaveBeenCalledWith(formattedFixture);
-          expect(response.tag).toEqual(formattedFixture);
-        }).finally(done);
-      });
-
-  });
-
-  describe('#deleteTag', function() {
-
-      var victimGuid, updateSequenceNumber;
-      beforeEach(function() {
-        victimGuid = _.uniqueId("tag");
-        updateSequenceNumber = 12345;
-        api.untagAll.promise.resolve(updateSequenceNumber);
-      });
-
-      it("deletes the tag and returns an empty object", function(done) {
-        controller.deleteTag(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
-          expect(api.untagAll).toHaveBeenCalledWith(victimGuid);
-          expect(response).toEqual({});
         }).finally(done);
       });
 
@@ -240,21 +132,21 @@ describe("Notes controllers", function() {
 
   });
 
-  describe('#tag', function() {
+  describe('#deleteNote', function() {
 
-    var rawFixture, formattedFixture;
-    beforeEach(function() {
-      rawFixture = fixtures.load('tags')[0];
-      api.tag.promise.resolve(rawFixture);
-      formattedFixture = TagTransformer.formatTag(rawFixture);
-    });
+      var victimGuid, updateSequenceNumber;
+      beforeEach(function() {
+        victimGuid = _.uniqueId("note");
+        updateSequenceNumber = 12345;
+        api.deleteNote.promise.resolve(updateSequenceNumber);
+      });
 
-    it("wraps and transforms the tags from the API", function(done) {
-      controller.tag(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(tag) {
-        expect(api.tag).toHaveBeenCalled();
-        expect(tag.tag).toEqual(formattedFixture);
-      }).finally(done);
-    });
+      it("deletes the note and returns an empty object", function(done) {
+        controller.deleteNote(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+          expect(api.deleteNote).toHaveBeenCalledWith(victimGuid);
+          expect(response).toEqual({});
+        }).finally(done);
+      });
 
   });
 
@@ -273,6 +165,42 @@ describe("Notes controllers", function() {
         expect(notebook.notebook).toEqual(formattedFixture);
       }).finally(done);
     });
+
+  });
+
+  describe('#notebooks', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('notebooks');
+      api.notebooks.promise.resolve(rawFixture);
+      formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+    });
+
+    it("wraps and transforms the notebooks from the API", function(done) {
+      controller.notebooks(ensession, request()).catch(onerror).then(function(response) {
+        expect(api.notebooks).toHaveBeenCalled();
+        expect(response.notebook).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#createNotebook', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = fixtures.load('notebook');
+        formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+        api.createNotebook.promise.resolve(rawFixture);
+      });
+
+      it("creates a notebook", function(done) {
+        controller.createNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
+          expect(api.createNotebook).toHaveBeenCalled();
+          expect(response.notebook).toEqual(formattedFixture);
+        }).finally(done);
+      });
 
   });
 
@@ -296,6 +224,60 @@ describe("Notes controllers", function() {
 
   });
 
+  describe('#tag', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('tags')[0];
+      api.tag.promise.resolve(rawFixture);
+      formattedFixture = TagTransformer.formatTag(rawFixture);
+    });
+
+    it("wraps and transforms the tags from the API", function(done) {
+      controller.tag(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(tag) {
+        expect(api.tag).toHaveBeenCalled();
+        expect(tag.tag).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#tags', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('tags');
+      api.tags.promise.resolve(rawFixture);
+      formattedFixture = TagTransformer.formatTag(rawFixture);
+    });
+
+    it("wraps and transforms the tags from the API", function(done) {
+      controller.tags(ensession, request()).catch(onerror).then(function(tags) {
+        expect(api.tags).toHaveBeenCalled();
+        expect(tags.tag).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#createTag', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = fixtures.load('tags')[0];
+        formattedFixture = TagTransformer.formatTag(rawFixture);
+        api.createTag.promise.resolve(rawFixture);
+      });
+
+      it("creates a tag", function(done) {
+        controller.createTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
+          expect(api.createTag).toHaveBeenCalledWith(formattedFixture);
+          expect(response.tag).toEqual(formattedFixture);
+        }).finally(done);
+      });
+
+  });
+
   describe('#updateTag', function() {
 
     var rawFixture, formattedFixture;
@@ -316,6 +298,23 @@ describe("Notes controllers", function() {
 
   });
 
+  describe('#deleteTag', function() {
+
+      var victimGuid, updateSequenceNumber;
+      beforeEach(function() {
+        victimGuid = _.uniqueId("tag");
+        updateSequenceNumber = 12345;
+        api.untagAll.promise.resolve(updateSequenceNumber);
+      });
+
+      it("deletes the tag and returns an empty object", function(done) {
+        controller.deleteTag(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+          expect(api.untagAll).toHaveBeenCalledWith(victimGuid);
+          expect(response).toEqual({});
+        }).finally(done);
+      });
+
+  });
 
   function apiSpy(api) {
     _.functions(api).forEach(function(methodName) {
@@ -343,4 +342,4 @@ describe("Notes controllers", function() {
     return _.extend(fixtures.load('note'), {content: utils.wrapNoteContent(content)});
   }
 
-})
+});
