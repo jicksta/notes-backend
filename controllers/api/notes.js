@@ -17,14 +17,19 @@ exports.createNote = function(ensession, request) {
   return ensession.api.createNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
+exports.updateNote = function(ensession, request) {
+  return ensession.api.updateNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
+};
+
 exports.deleteNote = function(ensession, request) {
   var noteID = request.params.id;
-  return ensession.api.deleteNote(noteID).then(_.constant({}));
+  return ensession.api.deleteNote(noteID).then(deleteResponse);
 };
 
 exports.notebooks = function(ensession) {
   return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
+
 exports.createNotebook = function(ensession, request) {
   return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
@@ -39,13 +44,17 @@ exports.createTag = function(ensession, request) {
 
 exports.deleteTag = function(ensession, request) {
   var tagID = request.params.id;
-  return ensession.api.untagAll(tagID).then(_.constant({}));
+  return ensession.api.untagAll(tagID).then(deleteResponse);
+};
+
+exports.deleteNotebook = function(ensession, request) {
+  var notebookID = request.params.id;
+  return ensession.api.deleteNotebook(notebookID).then(deleteResponse);
 };
 
 
 ///////////////////////////////////////////
 ///////////////////////////////////////////
-
 
 function wrapWith(wrapping) {
   return function(value) {
@@ -59,4 +68,8 @@ function paginate(params) {
   var perPage = params.per_page || settings.paginationPageSizeDefault;
   if (perPage > settings.paginationPageSizeMax) throw "Pagination param too large!";
   return {max: perPage};
+}
+
+function deleteResponse(updateSequenceNumber) {
+  return {};
 }

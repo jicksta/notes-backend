@@ -3,6 +3,7 @@ var _ = require('underscore'),
     Evernote = require('evernote').Evernote,
     EvernoteAPI = require('../../lib/evernote_api'),
     EvernoteSession = require('../../lib/evernote_session'),
+    NoteTransformer = require('../../transformers/note_transformer'),
     sandboxSession = require('../fixtures/sandbox_session'),
     PromiseErrorSpy = require('../support/promise_error_spy'),
     fixtures = require('../support/fixtures'),
@@ -196,6 +197,23 @@ describe("EvernoteAPI", function() {
       });
     });
 
+  });
+
+  describe("#updateNote", function() {
+    it("updates the a note", function(done) {
+      expect(cachedAPIMethod("notes")).toFinishWith(done, function(results) {
+        var victim = _.last(results.notes),
+            newTitle = "New title " + Math.random(),
+            newContent = utils.wrapNoteContent("Content for " + newTitle);
+        _.extend(victim, {title: newTitle, content: newContent});
+        expect(victim.guid).toBeString();
+        return api.updateNote(victim).then(function(note) {
+          expect(note.guid).toEqual(victim.guid);
+          expect(note.title).toEqual(newTitle);
+          return api.note(victim.guid);
+        })
+      });
+    });
   });
 
   describe("#deleteNote", function() {

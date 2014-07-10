@@ -21,7 +21,10 @@ module.exports.install = function(router) {
   router.post("/api/notes", EN(notes.createNote));
   router.post("/api/notebooks", EN(notes.createNotebook));
 
+  router.put("/api/notes/:id", EN(notes.updateNote));
+
   router.delete("/api/notes/:id", EN(notes.deleteNote));
+  router.delete("/api/notebooks/:id", EN(notes.deleteNotebook));
   router.delete("/api/tags/:id", EN(notes.deleteTag));
 
 };
