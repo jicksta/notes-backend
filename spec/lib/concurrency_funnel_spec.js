@@ -48,7 +48,7 @@ describe('ConcurrencyFunnel', function() {
       expectStates("started", promises[3], true);
       expectStates("started", promises.slice(4, length), false);
       expectStates("settled", promises.slice(3, length), false);
-    }).finally(done);
+    });
 
     // Now let's resolve all except the next-to-last one.
     promises[0].resolve("null");

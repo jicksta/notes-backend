@@ -1,2 +1,2 @@
 var router = exports.router = require('express').Router();
-require("./api").install(router);
+require("./api_routes").install(router);

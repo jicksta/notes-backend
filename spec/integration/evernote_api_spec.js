@@ -5,7 +5,8 @@ var _ = require('underscore'),
     EvernoteSession = require('../../lib/evernote_session'),
     sandboxSession = require('../fixtures/sandbox_session'),
     PromiseErrorSpy = require('../support/promise_error_spy'),
-    fixtures = require('../support/fixtures');
+    fixtures = require('../support/fixtures'),
+    utils = require('../support/utilities');
 
 describe("EvernoteAPI", function() {
 
@@ -47,7 +48,7 @@ describe("EvernoteAPI", function() {
   describe("#createNotebook", function() {
     it("creates a notebook which is immediately available to notebooks()", function(done) {
       var notebookName = "Notebook " + Math.random();
-      expect(api.createNotebook(notebookName)).toFinishWith(done, function(notebook) {
+      expect(api.createNotebook({name: notebookName})).toFinishWith(done, function(notebook) {
         return api.notebooks().then(function(notebooks) {
           var found = _.findWhere(notebooks, {guid: notebook.guid});
           expect(found.name).toEqual(notebookName);
@@ -59,7 +60,7 @@ describe("EvernoteAPI", function() {
   describe("#createTag", function() {
     it("creates a tag which is immediately available to tags()", function(done) {
       var tagName = "tag" + Math.random();
-      expect(api.createTag(tagName)).toFinishWith(done, function(tag) {
+      expect(api.createTag({name: tagName})).toFinishWith(done, function(tag) {
         return api.tags().then(function(tags) {
           var found = _.findWhere(tags, {guid: tag.guid});
           expect(found.name).toEqual(tagName);
@@ -71,7 +72,7 @@ describe("EvernoteAPI", function() {
   describe("#createNote", function() {
 
     it("creates a simple note", function(done) {
-      var attrs = { title: "Title", content: wrapNoteContent("#createNote creates a simple note")};
+      var attrs = { title: "Title", content: utils.wrapNoteContent("#createNote creates a simple note")};
       expect(api.createNote(attrs)).toFinishWith(done, function(note) {
         expect(note.content).toEqual(null); // null because the server doesn't waste bandwidth sending it back
         expect(note.guid).toBeString();
@@ -83,7 +84,7 @@ describe("EvernoteAPI", function() {
     it("creates a complex note", function(done) {
       var attrs = {
         title: "Title",
-        content: wrapNoteContent("#createNote creates a simple note"),
+        content: utils.wrapNoteContent("#createNote creates a simple note"),
         tags: ["createNote1", "createNote2"]
       };
       expect(api.createNote(attrs)).toFinishWith(done, function(note) {
@@ -108,7 +109,7 @@ describe("EvernoteAPI", function() {
 
         return api.createNote({
           title: title,
-          content: wrapNoteContent("#createNote creates a simple note"),
+          content: utils.wrapNoteContent("#createNote creates a simple note"),
           tag_ids: _.pluck(selectedTags, "guid"),
           notebook_id: selectedNotebook.guid
         }).then(function(note) {
@@ -281,12 +282,5 @@ describe("EvernoteAPI", function() {
   }
 
   function noop() {}
-
-  function wrapNoteContent(innerXHTML) {
-    return "" +
-        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-        '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">' +
-        '<en-note>' + innerXHTML + '</en-note>';
-  }
 
 });

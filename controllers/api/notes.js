@@ -17,14 +17,16 @@ exports.tags = function(ensession) {
 };
 
 exports.createNotebook = function(ensession, request) {
-  throw("TODO");
+  return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
+exports.createNote = function(ensession, request) {
+  return ensession.api.createNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
 exports.note = function(ensession, request) {
   var noteID = request.params.id;
-  return ensession.api.note(noteID).then(function(note) {
-    return { note: note };
-  });
+  return ensession.api.note(noteID).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
 function wrapWith(wrapping) {
@@ -39,8 +41,4 @@ function paginate(params) {
   var perPage = params.per_page || settings.paginationPageSizeDefault;
   if (perPage > settings.paginationPageSizeMax) throw "Pagination param too large!";
   return {max: perPage};
-}
-
-function idFromGUID(obj) {
-  return _.extend({id: obj.guid}, obj);
 }

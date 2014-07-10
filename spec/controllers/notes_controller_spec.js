@@ -8,7 +8,8 @@ var _ = require('underscore'),
     NotebookTransformer = require('../../transformers/notebook_transformer'),
     TagTransformer = require('../../transformers/tag_transformer'),
     settings = require('../../config/settings'),
-    fixtures = require('../support/fixtures');
+    fixtures = require('../support/fixtures'),
+    utils = require('../support/utilities');
 
 describe("Notes controllers", function() {
 
@@ -21,9 +22,6 @@ describe("Notes controllers", function() {
 
   afterEach(function() {
     expect(onerror).not.toHaveBeenCalled();
-    if(onerror.wasCalled) {
-      console.error(onerror.argsForCall[0][0].stack);
-    }
   });
 
   describe('#notes', function() {
@@ -78,45 +76,93 @@ describe("Notes controllers", function() {
 
   describe('#notebooks', function() {
 
-    describe('responses', function() {
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('notebooks');
+      api.notebooks.promise.resolve(rawFixture);
+      formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+    });
 
-      var rawFixture, formattedFixture;
-      beforeEach(function() {
-        rawFixture = fixtures.load('notebooks');
-        api.notebooks.promise.resolve(rawFixture);
-        formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
-      });
+    it("wraps and transforms the notebooks from the API", function(done) {
+      controller.notebooks(ensession, request()).catch(onerror).then(function(response) {
+        expect(api.notebooks).toHaveBeenCalled();
+        expect(response.notebook).toEqual(formattedFixture);
+      }).finally(done);
+    });
 
-      it("wraps and transforms the notebooks from the API", function(done) {
-        controller.notebooks(ensession, request()).catch(onerror).then(function(response) {
-          expect(api.notebooks).toHaveBeenCalled();
-          expect(response.notebook).toEqual(formattedFixture);
-        }).finally(done);
-      });
+  });
 
+  describe('#note', function() {
+
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = noteFixtureWithContent("notes#note");
+      api.note.promise.resolve(rawFixture);
+      formattedFixture = NoteTransformer.formatNote(rawFixture);
+    });
+
+    it("returns the note with its body", function(done) {
+      controller.note(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(response) {
+        expect(api.note).toHaveBeenCalledWith(rawFixture.guid);
+        expect(response.note).toEqual(formattedFixture);
+        expect(response.note.body).toBeString(); // so the server can post-process a note for the client
+      }).finally(done);
     });
 
   });
 
   describe('#tags', function() {
 
-    describe('responses', function() {
+    var rawFixture, formattedFixture;
+    beforeEach(function() {
+      rawFixture = fixtures.load('tags');
+      api.tags.promise.resolve(rawFixture);
+      formattedFixture = TagTransformer.formatTag(rawFixture);
+    });
+
+    it("wraps and transforms the tags from the API", function(done) {
+      controller.tags(ensession, request()).catch(onerror).then(function(tags) {
+        expect(api.tags).toHaveBeenCalled();
+        expect(tags.tag).toEqual(formattedFixture);
+      }).finally(done);
+    });
+
+  });
+
+  describe('#createNotebook', function() {
 
       var rawFixture, formattedFixture;
       beforeEach(function() {
-        rawFixture = fixtures.load('tags');
-        api.tags.promise.resolve(rawFixture);
-        formattedFixture = TagTransformer.formatTag(rawFixture);
+        rawFixture = fixtures.load('notebook');
+        formattedFixture = NotebookTransformer.formatNotebook(rawFixture);
+        api.createNotebook.promise.resolve(rawFixture);
       });
 
-      it("wraps and transforms the tags from the API", function(done) {
-        controller.tags(ensession, request()).catch(onerror).then(function(tags) {
-          expect(api.tags).toHaveBeenCalled();
-          expect(tags.tag).toEqual(formattedFixture);
+      it("creates a notebook with the name given in the params", function(done) {
+        controller.createNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
+          expect(api.createNotebook).toHaveBeenCalled();
+          expect(response.notebook).toEqual(formattedFixture);
         }).finally(done);
       });
 
-    });
+  });
+
+  describe('#createNote', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = noteFixtureWithContent("notes##createNote");
+        formattedFixture = NoteTransformer.formatNote(rawFixture);
+        api.createNote.promise.resolve(rawFixture);
+      });
+
+      it("creates a note", function(done) {
+        controller.createNote(ensession, requestWithParams({note: formattedFixture})).catch(onerror).then(function(response) {
+          expect(api.createNote).toHaveBeenCalledWith(formattedFixture);
+          expect(response.note).toEqual(formattedFixture);
+          expect(response.note).toHaveKey("body");
+        }).finally(done);
+      });
 
   });
 
@@ -142,4 +188,9 @@ describe("Notes controllers", function() {
     return req;
   }
 
-});
+  function noteFixtureWithContent(content) {
+    return _.extend(fixtures.load('note'), {content: utils.wrapNoteContent(content)});
+  }
+
+})
+;

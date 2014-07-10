@@ -17,6 +17,8 @@ module.exports.install = function(router) {
   router.get("/api/notes", EN(notes.notes));
   router.get("/api/notes/:id", EN(notes.note));
   router.get("/api/notebooks", EN(notes.notebooks));
+
+  router.post("/api/notes", EN(notes.createNote));
   router.post("/api/notebooks", EN(notes.createNotebook));
 
 };
