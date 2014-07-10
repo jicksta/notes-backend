@@ -151,7 +151,7 @@ describe("Notes controllers", function() {
 
       var rawFixture, formattedFixture;
       beforeEach(function() {
-        rawFixture = noteFixtureWithContent("notes##createNote");
+        rawFixture = noteFixtureWithContent("notes#createNote");
         formattedFixture = NoteTransformer.formatNote(rawFixture);
         api.createNote.promise.resolve(rawFixture);
       });
@@ -161,6 +161,60 @@ describe("Notes controllers", function() {
           expect(api.createNote).toHaveBeenCalledWith(formattedFixture);
           expect(response.note).toEqual(formattedFixture);
           expect(response.note).toHaveKey("body");
+        }).finally(done);
+      });
+
+  });
+
+  describe('#deleteNote', function() {
+
+      var victimGuid, updateSequenceNumber;
+      beforeEach(function() {
+        victimGuid = _.uniqueId("note");
+        updateSequenceNumber = 12345;
+        api.deleteNote.promise.resolve(updateSequenceNumber);
+      });
+
+      it("deletes the note and returns an empty object", function(done) {
+        controller.deleteNote(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+          expect(api.deleteNote).toHaveBeenCalledWith(victimGuid);
+          expect(response).toEqual({});
+        }).finally(done);
+      });
+
+  });
+
+  describe('#createTag', function() {
+
+      var rawFixture, formattedFixture;
+      beforeEach(function() {
+        rawFixture = fixtures.load('tags')[0];
+        formattedFixture = TagTransformer.formatTag(rawFixture);
+        api.createTag.promise.resolve(rawFixture);
+      });
+
+      it("creates a tag", function(done) {
+        controller.createTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
+          expect(api.createTag).toHaveBeenCalledWith(formattedFixture);
+          expect(response.tag).toEqual(formattedFixture);
+        }).finally(done);
+      });
+
+  });
+
+  describe('#deleteTag', function() {
+
+      var victimGuid, updateSequenceNumber;
+      beforeEach(function() {
+        victimGuid = _.uniqueId("tag");
+        updateSequenceNumber = 12345;
+        api.untagAll.promise.resolve(updateSequenceNumber);
+      });
+
+      it("deletes the tag and returns an empty object", function(done) {
+        controller.deleteTag(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+          expect(api.untagAll).toHaveBeenCalledWith(victimGuid);
+          expect(response).toEqual({});
         }).finally(done);
       });
 
@@ -193,4 +247,3 @@ describe("Notes controllers", function() {
   }
 
 })
-;

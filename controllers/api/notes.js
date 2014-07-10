@@ -4,30 +4,48 @@ var _ = require('underscore'),
     NotebookTransformer = require('../../transformers/notebook_transformer'),
     TagTransformer = require('../../transformers/tag_transformer');
 
+exports.note = function(ensession, request) {
+  var noteID = request.params.id;
+  return ensession.api.note(noteID).then(NoteTransformer.formatNote).then(wrapWith("note"));
+};
+
 exports.notes = function(ensession, request) {
   return ensession.api.notes(paginate(request.params)).then(NoteTransformer.formatNotesResponse).then(wrapWith("note"));
-};
-
-exports.notebooks = function(ensession) {
-  return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
-};
-
-exports.tags = function(ensession) {
-  return ensession.api.tags().then(TagTransformer.formatTag).then(wrapWith("tag"));
-};
-
-exports.createNotebook = function(ensession, request) {
-  return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
 
 exports.createNote = function(ensession, request) {
   return ensession.api.createNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
-exports.note = function(ensession, request) {
+exports.deleteNote = function(ensession, request) {
   var noteID = request.params.id;
-  return ensession.api.note(noteID).then(NoteTransformer.formatNote).then(wrapWith("note"));
+  return ensession.api.deleteNote(noteID).then(_.constant({}));
 };
+
+exports.notebooks = function(ensession) {
+  return ensession.api.notebooks().then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+exports.createNotebook = function(ensession, request) {
+  return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+};
+
+exports.tags = function(ensession) {
+  return ensession.api.tags().then(TagTransformer.formatTag).then(wrapWith("tag"));
+};
+
+exports.createTag = function(ensession, request) {
+  return ensession.api.createTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
+};
+
+exports.deleteTag = function(ensession, request) {
+  var tagID = request.params.id;
+  return ensession.api.untagAll(tagID).then(_.constant({}));
+};
+
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+
 
 function wrapWith(wrapping) {
   return function(value) {
