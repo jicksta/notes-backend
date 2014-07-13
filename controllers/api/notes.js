@@ -14,11 +14,11 @@ exports.notes = function(ensession, request) {
 };
 
 exports.createNote = function(ensession, request) {
-  return ensession.api.createNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
+  return ensession.api.createNote(request.body.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
 exports.updateNote = function(ensession, request) {
-  return ensession.api.updateNote(request.params.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
+  return ensession.api.updateNote(request.body.note).then(NoteTransformer.formatNote).then(wrapWith("note"));
 };
 
 exports.deleteNote = function(ensession, request) {
@@ -36,11 +36,11 @@ exports.notebooks = function(ensession) {
 };
 
 exports.createNotebook = function(ensession, request) {
-  return ensession.api.createNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+  return ensession.api.createNotebook(request.body.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
 
 exports.updateNotebook = function(ensession, request) {
-  return ensession.api.updateNotebook(request.params.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
+  return ensession.api.updateNotebook(request.body.notebook).then(NotebookTransformer.formatNotebook).then(wrapWith("notebook"));
 };
 
 exports.tag = function(ensession, request) {
@@ -53,11 +53,11 @@ exports.tags = function(ensession) {
 };
 
 exports.createTag = function(ensession, request) {
-  return ensession.api.createTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
+  return ensession.api.createTag(request.body.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
 exports.updateTag = function(ensession, request) {
-  return ensession.api.updateTag(request.params.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
+  return ensession.api.updateTag(request.body.tag).then(TagTransformer.formatTag).then(wrapWith("tag"));
 };
 
 exports.deleteTag = function(ensession, request) {

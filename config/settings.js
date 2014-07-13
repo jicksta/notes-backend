@@ -12,10 +12,11 @@ var defaults = {
 
   // gibberish: true,
   // stubServiceSaving: true,
+  stubSessionWithTestAccount: false,
 
-  oauthStartPath: "/api/oauth/start",
+  loginPath: "/api/oauth/start",
   oauthCallbackURL: "http://localhost:4000/api/oauth/finish",
-  oauthSuccessRedirectURL: "/notes"
+  oauthSuccessRedirectURL: "http://localhost:4200/signin-success.html"
 };
 
 var overrides = {
@@ -25,6 +26,7 @@ var overrides = {
 var settings = module.exports = _.extend(defaults, overrides[env]);
 
 //// Collect any assertions below here.
-assert.ok(env !== "test" || settings.sandbox); // Require sandbox:true in test env
-assert.ok(settings.paginationPageSizeDefault <= settings.paginationPageSizeMax);
-//assert.ok(!settings.gibberish || stubServiceSaving); // Require stubServiceSaving if gibberish
+assert.ok(!(env === "test" && !settings.sandbox), "Tests must be ran in sandbox mode!");
+assert.ok(settings.paginationPageSizeDefault <= settings.paginationPageSizeMax, "Invalid paginationPageSizeDefault");
+assert.ok(!(settings.stubSessionWithTestAccount && env === "production"), "Cannot stub sessions in production!");
+//assert.ok(!(settings.gibberish && !stubServiceSaving), "Must stub service saving in gibberish mode!");

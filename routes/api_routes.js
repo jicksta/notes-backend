@@ -4,9 +4,9 @@ module.exports.install = function(router) {
       accounts = require("../controllers/api/accounts");
 
   router.get("/api/users/me", accounts.me);
-  router.get("/api/logout", accounts.logout);
-  router.get("/api/oauth/start", oauth.oauthStart);
+  router.get("/api/login", oauth.oauthStart);
   router.get("/api/oauth/finish", oauth.oauthFinish); // EN action?
+  router.get("/api/logout", accounts.logout);
 
   //////////////////////////////////////////////////////////////////////////////
 

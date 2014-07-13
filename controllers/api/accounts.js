@@ -1,9 +1,12 @@
 var settings = require('../../config/settings'),
+    EvernoteAuth = require('../../lib/evernote_auth'),
     EvernoteSession = require('../../lib/evernote_session');
 
 exports.me = function(request, response) {
   // return response.json(401, {error: "Not authenticated!"});
-  var session = new EvernoteSession(request.session);
+  var session;
+  if(settings.stubSessionWithTestAccount) session = new EvernoteSession(require('../../spec/fixtures/sandbox_session'));
+  else session = new EvernoteSession(request.session);
 
   if (session.isAuthenticated) {
     session.userJSON().then(function(userJSON) {
@@ -13,11 +16,13 @@ exports.me = function(request, response) {
     });
 
   } else {
-    if (request.xhr) {
-      response.json(401, {error: "Not authenticated!"});
-    } else {
-      response.redirect(settings.oauthStartPath);
-    }
+    var auth = new EvernoteAuth().oauthSetup();
+    auth.then(function(result) {
+      request.session.OAUTH_SECRET = result.oauthTokenSecret;
+      request.xhr ? response.json(result) : response.redirect(result.redirectTo);
+    }, function(response) {
+      response.json(500, {error: response});
+    });
   }
 };
 

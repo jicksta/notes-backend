@@ -20,7 +20,8 @@ exports.oauthFinish = function(request, response) {
 
   auth.then(function(result) {
     _.extend(request.session, result);
-    response.redirect(settings.oauthSuccessRedirectURL);
+    response.render("oauthFinish");
+//    response.redirect(settings.oauthSuccessRedirectURL);
   }, errorHandler(response));
 };
 

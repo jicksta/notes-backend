@@ -34,7 +34,7 @@ describe("Notes controllers", function() {
     });
 
     it("returns the note with its body", function(done) {
-      controller.note(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(response) {
+      controller.note(ensession, request({id: rawFixture.guid})).catch(onerror).then(function(response) {
         expect(api.note).toHaveBeenCalledWith(rawFixture.guid);
         expect(response.note).toEqual(formattedFixture);
         expect(response.note.body).toBeString(); // so the server can post-process a note for the client
@@ -67,7 +67,7 @@ describe("Notes controllers", function() {
 
       it('translates the :per_page into a "max" param', function() {
         var perPage = 100;
-        controller.notes(ensession, requestWithParams({per_page: perPage}));
+        controller.notes(ensession, request({per_page: perPage}));
         expect(api.notes).toHaveBeenCalledWith({max: perPage});
       });
 
@@ -84,7 +84,7 @@ describe("Notes controllers", function() {
 
       it("rejects a :per_page greater than 100", function() {
         expect(function() {
-          controller.notes(ensession, requestWithParams({per_page: 101}));
+          controller.notes(ensession, request({per_page: 101}));
         }).toThrow();
         expect(api.notes).not.toHaveBeenCalled();
       });
@@ -103,7 +103,8 @@ describe("Notes controllers", function() {
       });
 
       it("creates a note", function(done) {
-        controller.createNote(ensession, requestWithParams({note: formattedFixture})).catch(onerror).then(function(response) {
+        var req = request({id: formattedFixture.id}, {note: formattedFixture});
+        controller.createNote(ensession, req).catch(onerror).then(function(response) {
           expect(api.createNote).toHaveBeenCalledWith(formattedFixture);
           expect(response.note).toEqual(formattedFixture);
           expect(response.note).toHaveKey("body");
@@ -122,7 +123,8 @@ describe("Notes controllers", function() {
       });
 
       it("updates the note", function(done) {
-        controller.updateNote(ensession, requestWithParams({note: formattedFixture})).catch(onerror).then(function(response) {
+        var req = request({id: formattedFixture.id}, {note: formattedFixture});
+        controller.updateNote(ensession, req).catch(onerror).then(function(response) {
           var thriftyNote = api.updateNote.mostRecentCall().args[0];
           expect(thriftyNote).toBeInstanceOf(Evernote.Note);
           expect(thriftyNote.title).toEqual("New Title");
@@ -142,7 +144,7 @@ describe("Notes controllers", function() {
       });
 
       it("deletes the note and returns an empty object", function(done) {
-        controller.deleteNote(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+        controller.deleteNote(ensession, request({id: victimGuid})).catch(onerror).then(function(response) {
           expect(api.deleteNote).toHaveBeenCalledWith(victimGuid);
           expect(response).toEqual({});
         }).finally(done);
@@ -160,7 +162,7 @@ describe("Notes controllers", function() {
     });
 
     it("wraps and transforms the tags from the API", function(done) {
-      controller.notebook(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(notebook) {
+      controller.notebook(ensession, request({id: rawFixture.guid})).catch(onerror).then(function(notebook) {
         expect(api.notebook).toHaveBeenCalled();
         expect(notebook.notebook).toEqual(formattedFixture);
       }).finally(done);
@@ -196,7 +198,7 @@ describe("Notes controllers", function() {
       });
 
       it("creates a notebook", function(done) {
-        controller.createNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
+        controller.createNotebook(ensession, request({}, {notebook: formattedFixture})).catch(onerror).then(function(response) {
           expect(api.createNotebook).toHaveBeenCalled();
           expect(response.notebook).toEqual(formattedFixture);
         }).finally(done);
@@ -214,7 +216,8 @@ describe("Notes controllers", function() {
     });
 
     it("updates the notebook", function(done) {
-      controller.updateNotebook(ensession, requestWithParams({notebook: formattedFixture})).catch(onerror).then(function(response) {
+      var req = request({id: formattedFixture}, {notebook: formattedFixture});
+      controller.updateNotebook(ensession, req).catch(onerror).then(function(response) {
         var thriftyNotebook = api.updateNotebook.mostRecentCall().args[0];
         expect(thriftyNotebook).toBeInstanceOf(Evernote.Notebook);
         expect(thriftyNotebook.name).toEqual("New Name");
@@ -234,7 +237,7 @@ describe("Notes controllers", function() {
     });
 
     it("wraps and transforms the tags from the API", function(done) {
-      controller.tag(ensession, requestWithParams({id: rawFixture.guid})).catch(onerror).then(function(tag) {
+      controller.tag(ensession, request({id: rawFixture.guid})).catch(onerror).then(function(tag) {
         expect(api.tag).toHaveBeenCalled();
         expect(tag.tag).toEqual(formattedFixture);
       }).finally(done);
@@ -270,7 +273,8 @@ describe("Notes controllers", function() {
       });
 
       it("creates a tag", function(done) {
-        controller.createTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
+        var req = request({id: formattedFixture.id}, {tag: formattedFixture});
+        controller.createTag(ensession, req).catch(onerror).then(function(response) {
           expect(api.createTag).toHaveBeenCalledWith(formattedFixture);
           expect(response.tag).toEqual(formattedFixture);
         }).finally(done);
@@ -288,7 +292,8 @@ describe("Notes controllers", function() {
     });
 
     it("updates the tag", function(done) {
-      controller.updateTag(ensession, requestWithParams({tag: formattedFixture})).catch(onerror).then(function(response) {
+      var req = request({id: formattedFixture.id}, {tag: formattedFixture});
+      controller.updateTag(ensession, req).catch(onerror).then(function(response) {
         var thriftyTag = api.updateTag.mostRecentCall().args[0];
         expect(thriftyTag).toBeInstanceOf(Evernote.Tag);
         expect(thriftyTag.name).toEqual("New Name");
@@ -308,7 +313,7 @@ describe("Notes controllers", function() {
       });
 
       it("deletes the tag and returns an empty object", function(done) {
-        controller.deleteTag(ensession, requestWithParams({id: victimGuid})).catch(onerror).then(function(response) {
+        controller.deleteTag(ensession, request({id: victimGuid})).catch(onerror).then(function(response) {
           expect(api.untagAll).toHaveBeenCalledWith(victimGuid);
           expect(response).toEqual({});
         }).finally(done);
@@ -328,13 +333,9 @@ describe("Notes controllers", function() {
     return api;
   }
 
-  function request() {
-    return {params: {}};
-  }
-
-  function requestWithParams(params) {
-    var req = request();
-    _.extend(req.params, params);
+  function request(params, body) {
+    var req = {params: params || {}};
+    if(body) req.body = body;
     return req;
   }
 
