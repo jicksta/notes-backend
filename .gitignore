@@ -29,3 +29,4 @@ vendor
 _local
 .idea
 config/secrets.js
+.DS_Store
